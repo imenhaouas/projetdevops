@@ -1,11 +1,7 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'   // must match Jenkins Maven tool name
-        jdk 'JDK17'     // must match Jenkins JDK tool name
-    }
-
+   
     stages {
 
         stage('Checkout') {
