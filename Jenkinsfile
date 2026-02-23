@@ -10,13 +10,7 @@ pipeline {
             }
         }
 
-        stage('MAVEN Build') {
-            steps {
-                // Use the 'mvn' command to compile, test, and package the project
-                // '-B' for non-interactive mode, '-DskipTests' to skip tests (remove if you want to run tests)
-                sh 'mvn clean compile'
-            }
-        }
+      
 
         stage('SONARQUBE') {
             environment {
