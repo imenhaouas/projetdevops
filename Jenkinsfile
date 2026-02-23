@@ -1,34 +1,28 @@
 pipeline {
     agent any
 
-    environment {
-        // Use the secret text credential ID for SonarQube token
-        SONAR_AUTH_TOKEN = credentials('sonarqube')
-    }
-
     stages {
-        stage('Checkout') {
+        stage('MAVEN Build') {
             steps {
-                echo 'Cloning repository...'
-                checkout scm
-            }
-        }
-
-        stage('Compile') {
-            steps {
-                echo 'Compiling project...'
+                // Compile the project
+                // '-B' for non-interactive mode, '-DskipTests' to skip tests if desired
                 sh 'mvn clean compile'
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('SONARQUBE') {
+            environment {
+                SONAR_HOST_URL = 'http://192.168.50.4:9000/' // Your SonarQube server URL
+                SONAR_AUTH_TOKEN = credentials('sonarqube')  // Jenkins secret text ID
+            }
             steps {
-                echo 'Running SonarQube analysis...'
-                // Inject SonarQube URL and other env variables
-                withSonarQubeEnv('SonarQube') {
-                    // Pass the token explicitly
-                    sh "mvn sonar:sonar -Dsonar.projectKey=devops_git -Dsonar.login=$SONAR_AUTH_TOKEN"
-                }
+                // Run SonarQube analysis
+                sh """
+                   mvn sonar:sonar \
+                       -Dsonar.projectKey=devops_git \
+                       -Dsonar.host.url=$SONAR_HOST_URL \
+                       -Dsonar.login=$SONAR_AUTH_TOKEN
+                   """
             }
         }
     }
