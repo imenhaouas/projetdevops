@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-   
     stages {
 
         stage('Checkout') {
@@ -18,6 +17,14 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube analysis...'
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=devops_git'
+                }
+            }
+        }
+
     }
 }
-
