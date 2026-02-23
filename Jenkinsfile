@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        SONAR_AUTH_TOKEN = credentials('sonarqube') // le token dans Jenkins Credentials
+        // 'sonarqube' is the ID of your Jenkins credentials (token)
+        SONAR_AUTH_TOKEN = credentials('sonarqube')
     }
 
     stages {
@@ -21,12 +22,24 @@ pipeline {
             }
         }
 
-       stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-            sh 'mvn sonar:sonar -Dsonar.projectKey=devops_git'
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube analysis...'
+                // Inject SonarQube environment (URL, etc.)
+                withSonarQubeEnv('SonarQube') {
+                    // Pass the token explicitly to Maven
+                    sh "mvn sonar:sonar -Dsonar.projectKey=devops_git -Dsonar.login=$SONAR_AUTH_TOKEN"
+                }
+            }
         }
     }
-}
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check logs for details.'
+        }
     }
 }
