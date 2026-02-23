@@ -14,7 +14,7 @@ pipeline {
 
         stage('SONARQUBE') {
             environment {
-                SONAR_HOST_URL = 'http://192.168.50.4:9000/'
+                SONAR_HOST_URL = 'http://localhost:9000/'
                 SONAR_AUTH_TOKEN = credentials('sonarqube')
             }
             steps {
